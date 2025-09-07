@@ -1,11 +1,3 @@
-# app.py
-# Single-file Flask web app: Logistic Regression on Seaborn Titanic dataset
-# - Cleans data with SimpleImputer
-# - One-hot encodes categoricals
-# - Scales numerics
-# - Trains Logistic Regression
-# - Renders metrics + tables with simple HTML/CSS
-
 from flask import Flask, render_template_string, Response
 import io
 import pandas as pd
@@ -20,10 +12,6 @@ from sklearn.linear_model import LogisticRegression
 from sklearn import metrics
 
 app = Flask(__name__)
-
-# -----------------------------
-# Core ML routine
-# -----------------------------
 
 def run_pipeline(random_state: int = 42):
     # Load Seaborn Titanic dataset
@@ -81,7 +69,6 @@ def run_pipeline(random_state: int = 42):
     y_pred = model.predict(X_test)
     y_proba = model.predict_proba(X_test)[:, 1]
 
-    # Metrics
     accuracy = metrics.accuracy_score(y_test, y_pred)
     precision = metrics.precision_score(y_test, y_pred, zero_division=0)
     recall = metrics.recall_score(y_test, y_pred, zero_division=0)
@@ -89,11 +76,9 @@ def run_pipeline(random_state: int = 42):
     roc_auc = metrics.roc_auc_score(y_test, y_proba)
     cm = metrics.confusion_matrix(y_test, y_pred)
 
-    # Classification report as DataFrame
     report_dict = metrics.classification_report(y_test, y_pred, output_dict=True, zero_division=0)
     report_df = pd.DataFrame(report_dict).T.reset_index().rename(columns={"index": "class"})
 
-    # Predictions table (optional: first 20 rows for page)
     comparison = pd.DataFrame({
         "Actual": y_test.reset_index(drop=True).astype(int),
         "Predicted": pd.Series(y_pred).astype(int),
@@ -154,7 +139,7 @@ PAGE = """
 <body>
   <div class="container">
     <header>
-      <h1>🚢 Titanic – Logistic Regression (Seaborn)</h1>
+      <h1> Titanic – Logistic Regression (Seaborn)</h1>
       <form method="get" action="/">
         <button class="btn" type="submit">Re-run model</button>
       </form>
